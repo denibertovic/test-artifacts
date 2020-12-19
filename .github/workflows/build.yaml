@@ -15,16 +15,16 @@ jobs:
       - name: Building project
         run: echo "building project..."
       - id: version
-        run: echo "::set-output name=VERSION::$(cat VESION)"
+        run: echo "::set-output name=VERSION::$(cat VERSION)"
       - name: Create release artifact
         run: |
           mkdir release
           cd release
           echo "dinamo" > dinamo.txt
           cp ../README.md .
-          tar -czf ../artifact-{{ outputs.version.value }}-linux-x86_64.tar.gz .
+          tar -czf ../artifact-${{ outputs.version.value }}-linux-x86_64.tar.gz .
       - uses: actions/upload-artifact@v2
         with:
           name: build-artifact
-          path: artifact-{{ outputs.version.value }}-linux-x86_64.tar.gz
+          path: artifact-${{ outputs.version.value }}-linux-x86_64.tar.gz
           if-no-files-found: error
