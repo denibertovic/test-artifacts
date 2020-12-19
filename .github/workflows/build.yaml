@@ -20,7 +20,7 @@ jobs:
           mkdir release
           cd release
           echo "dinamo" > dinamo.txt
-          cp ../REDME.md .
+          cp ../README.md .
           tar -czf artifact-$VERSION-linux-x86_64.tar.gz .
       - uses: actions/upload-artifact@v2
         with:
