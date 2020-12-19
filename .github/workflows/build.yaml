@@ -21,7 +21,7 @@ jobs:
           cd release
           echo "dinamo" > dinamo.txt
           cp ../README.md .
-          tar -czf artifact-$VERSION-linux-x86_64.tar.gz .
+          tar -czf ../artifact-$VERSION-linux-x86_64.tar.gz .
       - uses: actions/upload-artifact@v2
         with:
           name: build-artifact
