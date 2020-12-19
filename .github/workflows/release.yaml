@@ -1,8 +1,10 @@
 on:
-  push:
-    # Sequence of patterns matched against refs/tags
+  workflow_run:
+    workflows: ["Build"]
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    types:
+      - completed
 
 name: Create Release
 
@@ -27,9 +29,39 @@ jobs:
             - Second Change
           draft: false
           prerelease: false
-      - uses: actions/download-artifact@v2
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
         with:
+          # Optional, GitHub token
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          # Required, workflow file name or ID
+          workflow: build.yaml
+          # Optional, the status or conclusion of a completed workflow to search for
+          # Can be one of a workflow conculsion::
+          # "failure", "success", "neutral", "cancelled", "skipped", "timed_out", "action_required"
+          # Or a workflow status:
+          # "completed", "in_progress", "queued"
+          # Default: "completed"
+          workflow_conclusion: success
+          # Optional, will get head commit SHA
+          # pr: ${{github.event.pull_request.number}}
+          # Optional, no need to specify if PR is
+          # commit: ${{github.event.pull_request.head.sha}}
+          # Optional, will use the branch
+          branch: master
+          # Optional, will use specified workflow run
+          # run_id: 1122334455
+          # Optional, uploaded artifact name,
+          # will download all artifacts if not specified
+          # and extract them in respective subdirectories
+          # https://github.com/actions/download-artifact#download-all-artifacts
           name: build-artifact
+          # Optional, directory where to extract artifact
+          path: ./
+          # Optional, defaults to current repo
+          # repo: ${{github.repository}}
+      - name: debug
+        run: ls -l
       - name: Upload Release Artifact(s)
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
