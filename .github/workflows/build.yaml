@@ -26,3 +26,4 @@ jobs:
         with:
           name: build-artifact
           path: artifact-$VERSION-linux-x86_64.tar.gz
+          if-no-files-found: error
