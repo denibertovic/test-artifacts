@@ -1,0 +1,24 @@
+name: "Build"
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Building project
+        run: echo "building project..."
+      - run: echo "::set-env name=VERSION::$(cat VERSION)"
+      - name: Create release artifact
+        run: |
+          mkdir release
+          cd release
+          echo "dinamo" > dinamo.txt
+          cp ../REDME.md .
+          tar -czf artifact-$VERSION-linux-x86_64.tar.gz .
+      - uses: actions/upload-artifact@v2
+        with:
+          name: build-artifact
+          path: release/artifact-$VERSION-linux-x86_64.tar.gz
