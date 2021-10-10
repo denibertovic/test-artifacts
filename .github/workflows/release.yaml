@@ -65,7 +65,12 @@ jobs:
           # Optional, defaults to current repo
           # repo: ${{github.repository}}
       - name: debug
-        run: ls -l
+        run: |
+          ls -l
+          mkdir dinamo
+          tar zxvf artifact-${{ steps.version.outputs.version }}-linux-x86_64.tar.gz -C dinamo
+          ls -l dinamo
+          cat dinamo/sha.txt
       - name: Upload Release Artifact(s)
         id: upload-release-asset
         uses: actions/upload-release-asset@v1

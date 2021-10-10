@@ -21,7 +21,6 @@ jobs:
           mkdir release
           cd release
           echo "dinamo" > dinamo.txt
-          echo "$GITHUB_JOB" > job.txt
           echo "$GITHUB_SHA" > sha.txt
           cp ../README.md .
           tar --xform=s:'\./\?':: -czf ../artifact-${{ steps.version.outputs.version }}-linux-x86_64.tar.gz ./
