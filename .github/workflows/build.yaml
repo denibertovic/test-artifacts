@@ -24,7 +24,7 @@ jobs:
           echo "$GITHUB_JOB" > job.txt
           echo "$GITHUB_SHA" > sha.txt
           cp ../README.md .
-          tar -czf ../artifact-${{ steps.version.outputs.version }}-linux-x86_64.tar.gz *
+          tar --xform=s:'\./\?':: -czf ../artifact-${{ steps.version.outputs.version }}-linux-x86_64.tar.gz ./
       - uses: actions/upload-artifact@v2
         with:
           name: build-artifact
