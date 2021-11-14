@@ -1,17 +1,11 @@
+name: Release
 on:
-  workflow_run:
-    workflows: ["Build"]
-    # branches: ["master"]
+  push:
     tags:
       - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-    types:
-      - completed
-
-name: Release
 
 jobs:
   release:
-    if: ${{ github.event.workflow_run.conclusion == 'success' && startsWith(github.ref, 'refs/tags/') }}
     name: Create Release
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +30,7 @@ jobs:
           # Optional, will get head commit SHA
           # pr: ${{github.event.pull_request.number}}
           # Optional, no need to specify if PR is
-          # commit: ${{github.event.pull_request.head.sha}}
+          commit: ${{env.GITHUB_SHA}}
           # Optional, will use the branch
           branch: master
           # Optional, will use specified workflow run
