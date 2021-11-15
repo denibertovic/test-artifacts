@@ -16,9 +16,9 @@ on:
       tag_sha:
         required: true
         type: string
-    secrets:
-      token:
-        required: true
+    # secrets:
+    #   token:
+    #     required: true
 
 jobs:
   release:
@@ -31,7 +31,7 @@ jobs:
         uses: dawidd6/action-download-artifact@v2
         with:
           # Optional, GitHub token
-          github_token: ${{ secrets.token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           # Required, workflow file name or ID
           workflow: build.yaml
           # Optional, the status or conclusion of a completed workflow to search for
@@ -69,7 +69,7 @@ jobs:
           tag_name: ${{ inputs.tag_name }}
           draft: false
           prerelease: false
-          token: ${{ secrets.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             Changes in this Release
             - First Change
