@@ -53,5 +53,5 @@ jobs:
     uses: denibertovic/test-artifacts/.github/workflows/release.yaml@master
     with:
       version: ${{ needs.build.outputs.version }}
-      tag_name: v${{ needs.version.outputs.version }}
+      tag_name: v${{ needs.build.outputs.version }}
       tag_sha: ${{ needs.build.outputs.sha }}
