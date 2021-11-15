@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag_sha: ${{ steps.sha.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.1
@@ -16,6 +19,8 @@ jobs:
         run: echo "building project..."
       - id: version
         run: echo "::set-output name=version::$(cat VERSION)"
+      - id: sha
+        run: echo "::set-output name=sha::$(echo $GITHUB_SHA)"
       - name: Create release artifact
         run: |
           mkdir release
@@ -44,3 +49,7 @@ jobs:
     needs: build
     if: startsWith(github.ref, 'refs/tags/')
     uses: denibertovic/test-artifacts/.github/workflows/release.yaml@master
+    with:
+      version: ${{ needs.build.outputs.version }}
+      tag_name: v${{ needs.version.outputs.version }}
+      tag_sha: ${{ needs.build.outputs.sha }}
