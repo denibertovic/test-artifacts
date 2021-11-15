@@ -43,4 +43,4 @@ jobs:
   release:
     needs: build
     if: startsWith(github.ref, 'refs/tags/')
-    uses: denibertovic/test-artifacts/.github/workflows/release.yaml@${{ env.GITHUB_SHA }}
+    uses: denibertovic/test-artifacts/.github/workflows/release.yaml@${{ github.sha }}
