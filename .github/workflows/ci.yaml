@@ -64,8 +64,8 @@ jobs:
       - name: Create release and upload artifact
         uses: softprops/action-gh-release@v1
         with:
-          name: Release v${{ needs.build.outputs.version }}
-          tag_name: v${{ needs.build.outputs.version }}
+          name: Release v${{ env.GITHUB_REF_NAME }}
+          tag_name: v${{ env.GITHUB_REF_NAME }}
           draft: false
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
