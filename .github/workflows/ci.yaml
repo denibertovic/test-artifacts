@@ -48,7 +48,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: build-artifact
-          path: artifact-${{ steps.version.outputs.version }}-${{ env.OS_NAME }}-x86_64.tar.gz
+          path: artifact-${{ steps.version.outputs.version }}-${{ matrix.OS_NAME }}-x86_64.tar.gz
           if-no-files-found: error
       - name: Delete artifact(s)
         run: |
