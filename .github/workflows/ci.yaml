@@ -8,7 +8,18 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        include:
+        - os: macos-latest
+          OS_NAME: macos
+          TARCMD: gtar
+        - os: ubuntu-latest
+          OS_NAME: linux
+          TARCMD: tar
+    runs-on: ${{ matrix.os }}
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     outputs:
@@ -19,6 +30,9 @@ jobs:
         uses: actions/checkout@v2.3.1
       - name: Building project
         run: echo "building project..."
+      - name: Install gnu-tar (only on MacOS)
+        run: brew install gnu-tar
+        if: matrix.os == 'macos-latest'
       - id: version
         run: echo "::set-output name=version::$(cat VERSION)"
       - id: sha
@@ -30,11 +44,11 @@ jobs:
           echo "dinamo" > dinamo.txt
           echo "$GITHUB_SHA" > sha.txt
           cp ../README.md .
-          tar --xform=s:'\./\?':: -czf ../artifact-${{ steps.version.outputs.version }}-linux-x86_64.tar.gz ./
+          ${{ matrix.TARCMD }} --xform=s:'\./\?':: -czf ../artifact-${{ steps.version.outputs.version }}-${{ matrix.OS_NAME }}-x86_64.tar.gz ./
       - uses: actions/upload-artifact@v2
         with:
           name: build-artifact
-          path: artifact-${{ steps.version.outputs.version }}-linux-x86_64.tar.gz
+          path: artifact-${{ steps.version.outputs.version }}-${{ env.OS_NAME }}-x86_64.tar.gz
           if-no-files-found: error
       - name: Delete artifact(s)
         run: |
@@ -84,6 +98,17 @@ jobs:
   #         ls -l dinamo
   #         cat dinamo/sha.txt
   release:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        include:
+        - os: macos-latest
+          OS_NAME: macos
+          TARCMD: gtar
+        - os: ubuntu-latest
+          OS_NAME: linux
+          TARCMD: tar
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
@@ -108,11 +133,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             WARNING - This is an automated description. Please update!
-          files: artifact-${{ needs.build.outputs.version }}-linux-x86_64.tar.gz
+          files: artifact-${{ needs.build.outputs.version }}-${{ matrix.OS_NAME }}-x86_64.tar.gz
       - name: debug
         run: |
           ls -l
           mkdir dinamo
-          tar zxvf artifact-${{ needs.build.outputs.version }}-linux-x86_64.tar.gz -C dinamo
+          ${{ matrix.TARCMD }} zxvf artifact-${{ needs.build.outputs.version }}-${{ matrix.OS_NAME }}-x86_64.tar.gz -C dinamo
           ls -l dinamo
           cat dinamo/sha.txt
