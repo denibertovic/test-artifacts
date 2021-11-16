@@ -98,17 +98,6 @@ jobs:
   #         ls -l dinamo
   #         cat dinamo/sha.txt
   release:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, ubuntu-latest]
-        include:
-        - os: macos-latest
-          OS_NAME: macos
-          TARCMD: gtar
-        - os: ubuntu-latest
-          OS_NAME: linux
-          TARCMD: tar
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
@@ -133,11 +122,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             WARNING - This is an automated description. Please update!
-          files: artifact-${{ needs.build.outputs.version }}-${{ matrix.OS_NAME }}-x86_64.tar.gz
-      - name: debug
-        run: |
-          ls -l
-          mkdir dinamo
-          ${{ matrix.TARCMD }} zxvf artifact-${{ needs.build.outputs.version }}-${{ matrix.OS_NAME }}-x86_64.tar.gz -C dinamo
-          ls -l dinamo
-          cat dinamo/sha.txt
+          files: artifact-${{ needs.build.outputs.version }}-*-x86_64.tar.gz
