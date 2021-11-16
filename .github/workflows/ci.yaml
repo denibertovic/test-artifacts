@@ -51,10 +51,13 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: debug 1
+        run: |
+          ls -la
       - uses: actions/download-artifact@v2
         with:
           name: build-artifact
-      - name: debug
+      - name: debug 2
         run: |
           ls -la
       - name: Create release and upload artifact
