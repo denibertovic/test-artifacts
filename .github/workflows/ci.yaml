@@ -47,6 +47,42 @@ jobs:
           name: build-artifact
       - name: Debug
         run: ls -l
+  prerelease:
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: debug 1
+        run: |
+          ls -la
+      - uses: actions/download-artifact@v2
+        with:
+          name: build-artifact
+      - name: debug 2
+        run: |
+          ls -la
+      - name: Create prerelease and upload artifact
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release dev-${{ github.ref_name }}-RC
+          tag_name: dev-${{ github.ref_name }}-rc
+          target_commitish: ${{ github.sha }}
+          draft: false
+          prerelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          body: |
+            DEVELOPMENT RELEASE
+            This is a development release of the current master branch.
+            It will continuously get updated with new artifacts and the tag is a
+            moving target.
+          files: artifact-${{ needs.build.outputs.version }}-linux-x86_64.tar.gz
+      - name: debug
+        run: |
+          ls -l
+          mkdir dinamo
+          tar zxvf artifact-${{ needs.build.outputs.version }}-linux-x86_64.tar.gz -C dinamo
+          ls -l dinamo
+          cat dinamo/sha.txt
   release:
     needs: build
     runs-on: ubuntu-latest
